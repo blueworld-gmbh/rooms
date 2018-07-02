@@ -21,8 +21,14 @@ export default class Event extends PureComponent {
 
     return event && (
       <div className="Event">
-        <div className="name">{event.summary + (event.private ? ' 👀' : '')}</div>
-        <div className="badge">{current ? 'Ends' : 'Starts'} at {moment(time).format('HH:mm')}</div>
+        <div className="item">
+          <div className="name">{event.summary + (event.private ? ' 👀' : '')}</div>
+          <div className="badge">{current ? 'Ends' : 'Starts'} at {moment(time).format('h:mm a')}</div>
+        </div>
+        <div className="item">
+          <div className="name">Another Event</div>
+          <div className="badge">Starts at 5:30 pm</div>
+        </div>
       </div>
     )
   }

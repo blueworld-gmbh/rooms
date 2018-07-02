@@ -3,11 +3,9 @@
 .BookNow {
   position: absolute;
   bottom: 2em;
-  left: 0;
-  right: 0;
   margin: auto;
   display: block;
-  width: max-content;
+  max-width: 440px;
   padding: 1em 3em;
   background-color: color(black alpha(10%));
   border: 0;

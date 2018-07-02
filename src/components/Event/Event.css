@@ -2,6 +2,12 @@
   padding: 2em;
   background: color(black alpha(10%));
 
+  .item {
+    padding-bottom: 2em;
+    margin-bottom: 1.5em;
+    border-bottom: 2px solid color(white alpha(30%));
+  }
+
   .badge {
     display: inline-block;
     padding: 0.5em;
@@ -12,7 +18,7 @@
 
   .name {
     margin-bottom: 0.25em;
-    font-size: 36px;
+    font-size: 24px;
   }
 
 }
