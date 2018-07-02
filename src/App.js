@@ -105,7 +105,7 @@ export default class App extends Component {
       .then(response => response.json())
       .then(({ name, schedule }) => this.setState({ name, schedule }, this.updateTime))
   }
-  
+
   // TODO: Clean up App's updateTime method
   updateTime() {
     const { schedule } = this.state
@@ -147,7 +147,7 @@ export default class App extends Component {
     } else { // Near event - Shows more detailed info about the state and current/next Event
       mainProps = {
         label: mainProps.label + (minutesLeft >= 30 ? ' until' : ' for'),
-        time: minutesLeft >= 30 ? moment(timeLeft).format('HH:mm') : ` ${minutesLeft}'`
+        time: minutesLeft >= 30 ? moment(timeLeft).format('h:mm') : ` ${minutesLeft}'`
       }
     }
 
