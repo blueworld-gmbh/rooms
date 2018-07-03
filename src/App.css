@@ -1,8 +1,8 @@
 @import 'variables.css';
 
 .App {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
+  display: flex;
+  flex-direction: row;
   width: 100vw;
   height: 100vh;
   color: white;

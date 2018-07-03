@@ -26,7 +26,7 @@ export default class Event extends PureComponent {
           <div className="badge">{current ? 'Ends' : 'Starts'} at {moment(time).format('h:mm a')}</div>
         </div>
         <div className="item">
-          <div className="name">Another Event</div>
+          <div className="name">Another Event that has a long long title</div>
           <div className="badge">Starts at 5:30 pm</div>
         </div>
       </div>

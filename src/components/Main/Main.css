@@ -11,12 +11,11 @@
     font-size: 48px;
     font-weight: 300;
   }
-  
+
   .time {
     text-transform: uppercase;
     font-weight: bold;
-    font-size: 164px;
-    letter-spacing: 0.1em;
+    font-size: 120px;
     white-space: pre;
   }
 
