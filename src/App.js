@@ -145,9 +145,13 @@ export default class App extends Component {
 
     // No/Distant event - Only shows the state of the room
     // Near event - Shows more detailed info about the state and current/next Event
-    mainProps = {
-      label: mainProps.label + (minutesLeft >= 30 ? ' until' : ' for'),
-      time: minutesLeft >= 30 ? moment(timeLeft).format('h:mm') : ` ${minutesLeft}'`
+    if (isAvailable && !minutesLeft) {
+      mainProps = {time: state}
+    } else {
+      mainProps = {
+        label: mainProps.label + (minutesLeft >= 30 ? ' until' : ' for'),
+        time: minutesLeft >= 30 ? moment(timeLeft).format('h:mm') : ` ${minutesLeft}'`
+      }
     }
 
     return (
