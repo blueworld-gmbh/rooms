@@ -9,14 +9,19 @@
   .label {
     text-transform: uppercase;
     font-size: 48px;
-    font-weight: 300;
+    font-weight: 600;
+  }
+
+  .minuteLabel {
+    display: block;
+    font-size: 48px;
   }
 
   .time {
     text-transform: uppercase;
     font-weight: bold;
-    font-size: 120px;
-    white-space: pre;
+    font-size: 240px;
+    line-height: 1;
   }
 
 }

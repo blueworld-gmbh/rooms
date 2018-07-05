@@ -1,7 +1,7 @@
 .event-list {
   padding: 2em;
   background: color(black alpha(10%));
-  max-width: 40%;
+  width: 36%;
   .event {
     padding-bottom: 1.5em;
     margin-bottom: 1em;
