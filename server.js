@@ -8,34 +8,51 @@ const port = process.env.PORT || 3000
 
 app.get('/api/rooms/:room', function (req, res, next) {
 
-  let now = moment()
-
-  res.json({
-    name: 'Flame',
-    schedule: [
-      {start: now.startOf('minute'),
-      end: now.clone().add(15, 'minute'),
-      summary: 'Flash meeting 1'},
-      {start: now.clone().add(15, 'minute'),
-      end: now.clone().add(30, 'minute'),
-      summary: 'Flash meeting 2'}
-    ]
-  })
-
-
-  // let roomSlug = req.params.room
-  // if (!calendar.roomExists(roomSlug)) { res.status(404).json({ error: "Room not found" }); next(); return; }
+  //  *DUMMY DATA*
+  // let now = moment()
+  // let schedule = [
+  //   {
+  //     start: now.startOf('minute'),
+  //     end: now.clone().add(15, 'minute'),
+  //     available: false,
+  //   },{
+  //     start: now.clone().add(15, 'minute'),
+  //     end: now.clone().add(30, 'minute'),
+  //     summary: 'Flash meeting 1'
+  //   },{
+  //     start: now.clone().add(30, 'minute'),
+  //     end: now.clone().add(60, 'minute'),
+  //     available: true,
+  //   },{
+  //     start: now.clone().add(60, 'minute'),
+  //     end: now.clone().add(120, 'minute'),
+  //     summary: 'Flash meeting 2'
+  //   }
+  // ]
   //
-  // var now = moment()
+  // schedule.unshift({ start: now.clone().startOf('day'), end: now.clone().startOf('day') })
+  // schedule.push({ start: now.clone().endOf('day'), end: now.clone().endOf('day'), available: true })
   //
-  // calendar.getSchedule(req.params.room, now, (err, schedule) => {
-  //   if (err) { res.status(500).json({ error: "API Not Available" }); next(); return; }
   //
-  //   res.json({
-  //     name: calendar.getRoomName(roomSlug),
-  //     schedule: schedule
-  //   })
+  // res.json({
+  //   name: 'Flame',
+  //   schedule: schedule,
   // })
+
+
+  let roomSlug = req.params.room
+  if (!calendar.roomExists(roomSlug)) { res.status(404).json({ error: "Room not found" }); next(); return; }
+
+  var now = moment()
+
+  calendar.getSchedule(req.params.room, now, (err, schedule) => {
+    if (err) { res.status(500).json({ error: "API Not Available" }); next(); return; }
+
+    res.json({
+      name: calendar.getRoomName(roomSlug),
+      schedule: schedule
+    })
+  })
 })
 
 
