@@ -20,7 +20,7 @@ export default class Event extends PureComponent {
     let time = event ? (current ? event.end : event.start) : 0
 
     return event && (
-      <div className="item">
+      <div className="event">
         <div className="name">{event.summary + (event.private ? ' 👀' : '')}</div>
         <div className="badge">{current ? 'Ends' : 'Starts'} at {moment(time).format('h:mm a')}</div>
       </div>

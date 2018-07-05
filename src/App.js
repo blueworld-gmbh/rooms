@@ -161,7 +161,9 @@ export default class App extends Component {
           <Main {...mainProps}>
             {isAvailable && <BookNow book={this.book} />}
           </Main>
-          <Event {...eventProps} />
+          <div className='event-list'>
+            <Event {...eventProps} />
+          </div>
         </div>
       ) : null
     )

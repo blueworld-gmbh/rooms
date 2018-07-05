@@ -1,8 +1,8 @@
-.Event {
+.event-list {
   padding: 2em;
   background: color(black alpha(10%));
   max-width: 40%;
-  .item {
+  .event {
     padding-bottom: 1.5em;
     margin-bottom: 1em;
     border-bottom: 2px solid color(white alpha(30%));
