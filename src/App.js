@@ -116,8 +116,11 @@ export default class App extends Component {
     // If there's no current event, something's probably wrong or we went into the next day
     const isAvailable = currentEvent ? currentEvent.available : false
     const isLoading = currentEvent ? false : true
+    const scheduledEvents = schedule.filter((event) => {
+      return !event.available && now.isBefore(event.end)
+    })
 
-    this.setState({ now, isLoading, isAvailable, currentEvent, nextEvent, nextFreeSlot })
+    this.setState({ now, isLoading, isAvailable, currentEvent, nextEvent, nextFreeSlot, scheduledEvents })
   }
 
   render() {
@@ -141,14 +144,10 @@ export default class App extends Component {
     }
 
     // No/Distant event - Only shows the state of the room
-    if (minutesLeft >= 120 || isAvailable && !minutesLeft) {
-      mainProps = { time: state }
-      eventProps = {}
-    } else { // Near event - Shows more detailed info about the state and current/next Event
-      mainProps = {
-        label: mainProps.label + (minutesLeft >= 30 ? ' until' : ' for'),
-        time: minutesLeft >= 30 ? moment(timeLeft).format('h:mm') : ` ${minutesLeft}'`
-      }
+    // Near event - Shows more detailed info about the state and current/next Event
+    mainProps = {
+      label: mainProps.label + (minutesLeft >= 30 ? ' until' : ' for'),
+      time: minutesLeft >= 30 ? moment(timeLeft).format('h:mm') : ` ${minutesLeft}'`
     }
 
     return (
@@ -162,7 +161,10 @@ export default class App extends Component {
             {isAvailable && <BookNow book={this.book} />}
           </Main>
           <div className='event-list'>
-            <Event {...eventProps} />
+            {this.state.scheduledEvents.map((event) => {
+              eventProps = { current: event == currentEvent, event }
+              return (<Event {...eventProps} />);
+            })}
           </div>
         </div>
       ) : null
