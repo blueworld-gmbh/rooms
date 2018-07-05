@@ -150,8 +150,20 @@ export default class App extends Component {
     } else {
       mainProps = {
         label: mainProps.label + (minutesLeft >= 30 ? ' until' : ' for'),
-        time: minutesLeft >= 30 ? moment(timeLeft).format('h:mm') : ` ${minutesLeft}'`
+        time: minutesLeft >= 30 ? moment(timeLeft).format('h:mm') : `${minutesLeft}`
       }
+    }
+
+    let eventList;
+    if(this.state.scheduledEvents.length > 0) {
+      eventList = (
+        <div className='event-list'>
+          {this.state.scheduledEvents.map((event) => {
+            eventProps = { current: event == currentEvent, event }
+            return (<Event {...eventProps} />);
+          })}
+        </div>
+      );
     }
 
     return (
@@ -164,12 +176,7 @@ export default class App extends Component {
           <Main {...mainProps}>
             {isAvailable && <BookNow book={this.book} />}
           </Main>
-          <div className='event-list'>
-            {this.state.scheduledEvents.map((event) => {
-              eventProps = { current: event == currentEvent, event }
-              return (<Event {...eventProps} />);
-            })}
-          </div>
+          { eventList }
         </div>
       ) : null
     )

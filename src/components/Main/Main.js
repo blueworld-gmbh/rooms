@@ -17,11 +17,15 @@ export default class Main extends PureComponent {
 
   render() {
     const { children, label, time } = this.props
-
+    let minutes;
+    if (label.endsWith('for')) {
+      minutes = <span className="minuteLabel">minutes</span>;
+    }
     return (
       <div className="Main">
         <div className="label">{label}</div>
         <div className="time">{time}</div>
+        { minutes }
         { children }
       </div>
     )
