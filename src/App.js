@@ -52,8 +52,19 @@ const getFreeSlots = function (events, now) {
   return slots
 }
 
-export default class App extends Component {
+const dedupe = function(schedule) {
+  let events = [];
 
+  schedule.map(nextEvent => {
+    if (!events.find(event => event.start === nextEvent.start)) {
+      events.push(nextEvent);
+    }
+  });
+
+  return events;
+}
+
+export default class App extends Component {
   constructor(props) {
     super(props)
 
@@ -84,7 +95,10 @@ export default class App extends Component {
   fetchSchedule = () => {
     fetch(`/api/rooms/${this.state.slug}`)
       .then(response => response.json())
-      .then(({ name, schedule }) => this.setState({ name, schedule }, this.updateTime))
+      .then(({ name, schedule }) => {
+        schedule = dedupe(schedule);
+        this.setState({ name, schedule }, this.updateTime)
+      });
   }
 
   book = () => {
@@ -116,15 +130,12 @@ export default class App extends Component {
     // If there's no current event, something's probably wrong or we went into the next day
     const isAvailable = currentEvent ? currentEvent.available : false
     const isLoading = currentEvent ? false : true
-    const scheduledEvents = schedule.filter((event) => {
-      return !event.available && now.isBefore(event.end)
-    })
 
-    this.setState({ now, isLoading, isAvailable, currentEvent, nextEvent, nextFreeSlot, scheduledEvents })
+    this.setState({ now, isLoading, isAvailable, currentEvent, nextEvent, nextFreeSlot })
   }
 
   render() {
-    const { name, slug, now, isLoading, isAvailable, currentEvent, nextEvent, nextFreeSlot } = this.state
+    const { name, now, schedule, isLoading, isAvailable, currentEvent, nextEvent, nextFreeSlot } = this.state
     const state = isAvailable ? 'free' : 'busy'
 
     let minutesLeft, timeLeft, mainProps = { label: state }, eventProps = {}
@@ -155,11 +166,15 @@ export default class App extends Component {
     }
 
     let eventList;
-    if(this.state.scheduledEvents.length > 0) {
+    const scheduledEvents = schedule.filter((event) => {
+      return !event.available && now.isBefore(event.end)
+    });
+
+    if (scheduledEvents.length > 0) {
       eventList = (
         <div className='event-list'>
-          {this.state.scheduledEvents.map((event) => {
-            eventProps = { current: event == currentEvent, event }
+          {scheduledEvents.map((event) => {
+            eventProps = {key: event.start, current: event == currentEvent, event}
             return (<Event {...eventProps} />);
           })}
         </div>
