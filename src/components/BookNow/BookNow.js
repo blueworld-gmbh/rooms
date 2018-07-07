@@ -15,10 +15,10 @@ export default class BookNow extends Component {
     when: null
   }
 
-  reserve() {
+  reserve(e) {
     const { book, when } = this.props
 
-    return book(when);
+    return book(when, e);
   }
 
   render() {

@@ -6,6 +6,7 @@ import './App.css'
 import Main from './components/Main/Main'
 import Event from './components/Event/Event'
 import BookNow from './components/BookNow/BookNow'
+import * as Spinner from 'ladda';
 
 export default class App extends Component {
   constructor(props) {
@@ -100,7 +101,9 @@ export default class App extends Component {
       .then(this.refresh);
   }
 
-  book = (until) => {
+  book = (until, e) => {
+    const spinner = Spinner.create(e.target);
+    spinner.start();
     fetch(`/api/rooms/${this.state.slug}`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -108,7 +111,10 @@ export default class App extends Component {
       })
       .then(this.handleErrors)
       .then(this.parseResponse)
-      .then(this.refresh);
+      .then((response) => {
+        spinner.stop();
+        this.refresh(response);
+      });
   }
 
   updateTime = () => {
@@ -136,7 +142,7 @@ export default class App extends Component {
   parseResponse = (response) => response.json();
 }
 
-//  Identify next available meeting slots
+//  Identify next available meeting end times
 const getNextAvailable = function(now, nextEvent, options = {}) {
   const defaults = { count: 2, interval: 30 }
   const { count, interval } = {...defaults, ...options};
@@ -149,17 +155,21 @@ const getNextAvailable = function(now, nextEvent, options = {}) {
     slots.push(hour.clone().add(interval * i, 'minutes'));
   }
 
-  //  Shift slots into the future
-  while (slots[0].isBefore(now)) {
+  //  Shift all slots until the first one is in the future
+  while (slots[0].isBefore(now.clone().add(2, 'minutes'))) {
     slots.forEach(slot => slot.add(interval, 'minutes'));
   }
 
-  // Drop/truncate slots after next event
+  // Drop/truncate slots after the next event
   if (nextEvent) {
     for (let i = 0; i < slots.length; i++) {
       if (slots[i].isAfter(nextEvent.start)) {
-        slots[i] = moment(nextEvent.start);
-        slots = slots.slice(0, i + 1);
+        if (i === 0 || slots[i - 1].isBefore(nextEvent.start)) {
+          slots[i] = moment(nextEvent.start);
+          slots = slots.slice(0, i + 1);
+        } else { // the previous slot equals the next event start
+          slots = slots.slice(0, i);
+        }
         break;
       }
     }

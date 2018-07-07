@@ -1,4 +1,5 @@
 @import 'variables.css';
+@import 'ladda.min.css';
 
 .App {
   display: flex;
