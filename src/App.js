@@ -43,7 +43,7 @@ export default class App extends Component {
     let state = 'free';
     if (!isAvailable) {
       const busyUntil = nextFreeSlot ? moment(nextFreeSlot.start) : now.endOf('day');
-      mainProps = { label: 'busy until', time: moment(busyUntil).format('h:mm') };
+      mainProps = { label: 'busy until', time: busyUntil.format('h:mm') };
       state = 'busy';
     } else if (nextEvent) {
       const freeUntil = moment(nextEvent.start);

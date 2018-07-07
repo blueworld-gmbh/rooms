@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import moment from 'moment'
 
 import './BookNow.css'
 
@@ -24,9 +25,12 @@ export default class BookNow extends Component {
   render() {
     const { when } = this.props
 
+    const duration = moment.duration(when.diff(moment())).humanize();
+
     return (
       <button className="BookNow" onClick={this.reserve.bind(this)}>
-      {`Book until ${when.format('h:mm')}`}
+        <div>{`Book until ${when.format('h:mm')}`}</div>
+        <div>{`(${duration})`}</div>
       </button>
     )
   }
