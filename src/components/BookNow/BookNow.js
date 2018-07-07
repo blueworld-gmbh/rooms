@@ -7,19 +7,27 @@ export default class BookNow extends Component {
 
   static propTypes = {
     book: PropTypes.func,
-    minutes: PropTypes.number
+    when: PropTypes.object
   }
 
   static defaultProps = {
     book: () => { },
-    minutes: 15
+    when: null
+  }
+
+  reserve() {
+    const { book, when } = this.props
+
+    return book(when);
   }
 
   render() {
-    const { book, minutes } = this.props
+    const { when } = this.props
 
     return (
-      <button className="BookNow" onClick={book}>{`Book now for ${Math.min(15, minutes)}'`}</button>
+      <button className="BookNow" onClick={this.reserve.bind(this)}>
+      {`Book until ${when.format('h:mm')}`}
+      </button>
     )
   }
 

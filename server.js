@@ -2,94 +2,89 @@ const moment = require('moment')
 const calendar = require('./calendar')
 const express = require('express')
 const history = require('connect-history-api-fallback')
+const bodyParser = require('body-parser')
 
 const app = express()
 const port = process.env.PORT || 3000
 
+app.use(bodyParser.json())
+
 app.get('/api/rooms/:room', function (req, res, next) {
-
-  //  *DUMMY DATA*
-  // let now = moment()
-  // let schedule = [
-  //   {
-  //     start: now.startOf('minute'),
-  //     end: now.clone().add(15, 'minute'),
-  //     available: false,
-  //   },{
-  //     start: now.clone().add(15, 'minute'),
-  //     end: now.clone().add(30, 'minute'),
-  //     summary: 'Flash meeting 1'
-  //   },{
-  //     start: now.clone().add(30, 'minute'),
-  //     end: now.clone().add(60, 'minute'),
-  //     available: true,
-  //   },{
-  //     start: now.clone().add(60, 'minute'),
-  //     end: now.clone().add(120, 'minute'),
-  //     summary: 'Flash meeting 2'
-  //   }
-  // ]
-  //
-  // schedule.unshift({ start: now.clone().startOf('day'), end: now.clone().startOf('day') })
-  // schedule.push({ start: now.clone().endOf('day'), end: now.clone().endOf('day'), available: true })
-  //
-  //
-  // res.json({
-  //   name: 'Flame',
-  //   schedule: schedule,
-  // })
-
-
-  let roomSlug = req.params.room
-  if (!calendar.roomExists(roomSlug)) { res.status(404).json({ error: "Room not found" }); next(); return; }
-
-  var now = moment()
-
-  calendar.getSchedule(req.params.room, now, (err, schedule) => {
-    if (err) { res.status(500).json({ error: "API Not Available" }); next(); return; }
-
-    res.json({
-      name: calendar.getRoomName(roomSlug),
-      schedule: schedule
+  if (isValidRequest(req, res, next)) {
+    calendar.getSchedule(req.params.room, moment(), (err, schedule) => {
+      if (isValidResponse(err, res, next)) {
+        res.json({
+          name: calendar.getRoomName(req.params.room),
+          schedule: schedule
+        })
+      }
     })
-  })
+  }
 })
 
-
-// Quickly book a room for 15'. No args needed (for the time being)
+// Book a room from now until the specified time
 app.post('/api/rooms/:room', function (req, res, next) {
-  let roomSlug = req.params.room
-  if (!calendar.roomExists(roomSlug)) { res.status(404).json({ error: "Room not found" }); next(); return; }
+  if (!isValidRequest(req, res, next)) {
+    return;
+  }
 
-  let now = moment()
+  if (!req.body.end) {
+    res.status(400).json({ error: "Parameter missing" });
+    next();
+    return;
+  }
 
-  calendar.getSchedule(req.params.room, now, (err, schedule) => {
-    if (err) { res.status(500).json({ error: "API Not Available" }); next(); return; }
+  let start = moment().startOf('minute');
+  let end = moment(req.body.end).startOf('minute');
 
-    let freeSlot = schedule.find((s) => now.isBetween(s.start, s.end) && s.available )
-    if( ! freeSlot ) { res.status(409).json({ error: "Room is busy right now" }); next(); return; }
+  calendar.getSchedule(req.params.room, start, (err, schedule) => {
+    if (isValidResponse(err, res, next)) {
+      let freeSlot = schedule.find((s) => start.isBetween(s.start, s.end) && s.available)
+      if (!freeSlot) {
+        res.status(409).json({ error: "Room is busy right now" });
+        next();
+        return;
+      }
 
-    let event = {
-      start: now.startOf('minute'),
-      end: moment.min(now.clone().add(15, 'minute'), freeSlot.end), // Make sure we don't overbook the room
-      summary: 'Flash meeting'
-    }
+      end = moment.min(end, freeSlot.end); // Don't double-book the room
+      const event = { start, end, summary: 'Flash meeting' };
 
-    calendar.bookEvent(req.params.room, event, (err, newEvent) => {
-      if (err) { res.status(500).json({ error: "API Not Available" }); next(); return; }
+      console.log(
+        `Booking ${req.params.room} `+
+        `from ${start.format('h:mm')} to ${end.format('h:mm')}`
+      )
 
-      schedule.push(newEvent)
-      schedule = calendar.unifySchedule(schedule)
-
-      res.json({
-        name: calendar.getRoomName(roomSlug),
-        schedule: schedule
+      calendar.bookEvent(req.params.room, event, (err, newEvent) => {
+        if (isValidResponse(err, res, next)) {
+          schedule.push(newEvent)
+          res.json({
+            name: calendar.getRoomName(req.params.room),
+            schedule: calendar.unifySchedule(schedule)
+          })
+        }
       })
-    })
-
+    }
   })
 })
 
+function isValidRequest(req, res, next) {
+  if (calendar.roomExists(req.params.room)) {
+    return true;
+  }
+
+  res.status(404).json({ error: "Room not found" });
+  next();
+  return false;
+}
+
+function isValidResponse(err, res, next) {
+  if (err) {
+    res.status(500).json({ error: "API Not Available" });
+    next();
+    return false;
+  }
+  return true;
+}
 
 app.use(history())
 app.use(require('nwb/express')(express))
