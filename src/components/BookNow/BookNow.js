@@ -27,9 +27,15 @@ export default class BookNow extends Component {
 
     const duration = moment.duration(when.diff(moment())).humanize();
 
+    let BookNowClass = "BookNow";
+
+    if (duration.endsWith('hour')) {
+      BookNowClass = "BookNowHour";
+    }
+
     return (
-      <button className="BookNow" onClick={this.reserve.bind(this)}>
-        <div>{`Book until ${when.format('h:mm')}`}</div>
+      <button className={`${BookNowClass}`} onClick={this.reserve.bind(this)}>
+        <div className="BookHour">{`Book until ${when.format('h:mm')}`}</div>
         <div>{`(${duration})`}</div>
       </button>
     )
