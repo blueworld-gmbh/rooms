@@ -1,15 +1,12 @@
-var path = require('path')
+var path = require("path");
 
 module.exports = {
-  type: 'react-app',
-  webpack: {
-    rules: {
-      postcss: {
-        plugins: [
-          require('precss')(),
-          require('autoprefixer')()
-        ]
-      }
-    }
-  }
-}
+	type: "react-app",
+	webpack: {
+		rules: {
+			postcss: {
+				plugins: [require("precss")(), require("autoprefixer")()]
+			}
+		}
+	}
+};
