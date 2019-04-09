@@ -12,13 +12,20 @@ import App from "./App";
 import messages from "./translations";
 import "./index.css";
 
+const defaultLocale = "en-US";
 var locale =
 	(navigator.languages && navigator.languages[0]) ||
 	navigator.language ||
 	navigator.userLanguage ||
-	"en-US";
+	defaultLocale;
 
 moment.locale(locale);
+
+// check if locale does not exist in translation message keys
+// use the default locale
+if (!locale in messages) {
+	locale = defaultLocale;
+}
 
 render(
 	<IntlProvider locale={locale} messages={messages[locale]}>
