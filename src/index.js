@@ -23,7 +23,7 @@ moment.locale(locale);
 
 // check if locale does not exist in translation message keys
 // use the default locale
-if (!locale in messages) {
+if (!(locale in messages)) {
 	locale = defaultLocale;
 }
 
