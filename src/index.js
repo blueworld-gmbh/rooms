@@ -19,13 +19,13 @@ var locale =
 	navigator.userLanguage ||
 	defaultLocale;
 
-moment.locale(locale);
-
 // check if locale does not exist in translation message keys
 // use the default locale
 if (!(locale in messages)) {
 	locale = defaultLocale;
 }
+
+moment.locale(locale);
 
 render(
 	<IntlProvider locale={locale} messages={messages[locale]}>
