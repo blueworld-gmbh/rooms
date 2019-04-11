@@ -1,0 +1,9 @@
+version: "2"
+services:
+    rooms:
+        image: rooms
+        container_name: "Rooms"
+        network_mode: bridge
+        restart: always
+        ports:
+            - 3000:3000
